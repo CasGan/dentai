@@ -1,6 +1,6 @@
 "use client";
 //  hook to use query 
-import { bookAppointment, getAppointments, getBookedTimeSlots, getUserAppointments } from "@/lib/actions/appointments";
+import { bookAppointment, getAppointments, getBookedTimeSlots, getUserAppointments, updateAppointmentStatus } from "@/lib/actions/appointments";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 //hook to call doctors.ts server action
@@ -39,4 +39,16 @@ export function useUserAppointments(){
     queryFn: getUserAppointments,
   }); 
   return result; 
+}
+
+export function useUpdateAppointmentStatus() {
+  const queryClient = useQueryClient(); 
+
+  return useMutation({
+    mutationFn: updateAppointmentStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getAppointments']});
+    },
+    onError: (error) => console.error("Failed to update appointmetn: ", error),
+  });
 }
